@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"regexp"
+	"os/exec"
 	"time"
 )
 
@@ -48,3 +49,38 @@ func thisMonth() (string, string) {
 	since := time.Date(y, m, 1, 0, 0, 0, 0, time.Now().Location())
 	return fmt.Sprintf(since.Format(DTF)), fmt.Sprintf(since.AddDate(0, 1, 0).Add(-time.Nanosecond).Format(DTF))
 }
+
+// getFirstAndLatestCommitDates retrieves the first and latest commit dates from the git log.
+// It returns the dates in YYYY-MM-DD format.
+func getFirstAndLatestCommitDates() (string, string, error) {
+	// Get the first commit date
+	cmdFirst := exec.Command("git", "log", "--reverse", "--format=%cd", "--date=iso-local")
+	outputFirst, err := cmdFirst.Output()
+	if err != nil {
+		return "", "", fmt.Errorf("failed to get first commit date: %w", err)
+	}
+	firstCommitFull := string(outputFirst)
+	firstCommitDate := ""
+	if len(firstCommitFull) >= 10 {
+		firstCommitDate = firstCommitFull[0:10]
+	} else {
+		return "", "", errors.New("could not parse first commit date")
+	}
+
+	// Get the latest commit date
+	cmdLatest := exec.Command("git", "log", "-1", "--format=%cd", "--date=iso-local")
+	outputLatest, err := cmdLatest.Output()
+	if err != nil {
+		return "", "", fmt.Errorf("failed to get latest commit date: %w", err)
+	}
+	latestCommitFull := string(outputLatest)
+	latestCommitDate := ""
+	if len(latestCommitFull) >= 10 {
+		latestCommitDate = latestCommitFull[0:10]
+	} else {
+		return "", "", errors.New("could not parse latest commit date")
+	}
+
+	return firstCommitDate, latestCommitDate, nil
+}
+
