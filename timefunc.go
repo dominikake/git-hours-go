@@ -24,7 +24,7 @@ func timeZoneOffset() string {
 	return fmt.Sprintf("-%04d", (-1*offset)/60/60*100)
 }
 
-// ISO8601ToRFC3339 함수는 시간포맷을 RFC3339 시간포멧으로 변환합니다.
+// ISO8601ToRFC3339 converts time format to RFC3339 format.
 func ISO8601ToRFC3339(t string) (string, error) {
 	if !iso8601.MatchString(t) {
 		return t, errors.New("time string is not ISO8601 format")

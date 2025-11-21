@@ -116,7 +116,7 @@ Output example:
 ```
 	 2019-03-31 23:28:40 +0900 kim hanwoong edit go fmt
 2m26s >
-	 2019-03-31 23:31:06 +0900 kim hanwoong 설명을 추가함.
+	 2019-03-31 23:31:06 +0900 kim hanwoong added description.
 6m34s >
 	 2019-03-31 23:37:40 +0900 kim hanwoong edit comment
 1m46s >
