@@ -11,25 +11,38 @@ import (
 )
 
 func main() {
-	var since, before string
-	var err error
-	since, before, err = getFirstAndLatestCommitDates()
-	if err != nil {
-		// fallback to default
-		since, before = beforeMonth()
-	}
+	// Set default dates (last month)
+	since, before := beforeMonth()
 
 	sincePtr := flag.String("since", since+" 00:00:00 "+timeZoneOffset(), "since(after) date")
 	beforePtr := flag.String("before", before+" 23:59:59 "+timeZoneOffset(), "before date")
-
 	authorPtr := flag.String("author", "", "author name")            // git option : --author="\(Adam\)\|\(Jon\)"
 	durationPtr := flag.String("duration", "1h", "git log duration") // default "1h"
 	debugPtr := flag.Bool("debug", false, "debug mode")
 	helpPtr := flag.Bool("help", false, "print help")
+	autoDatesPtr := flag.Bool("auto-dates", false, "use first and last commit dates as range")
 	flag.Parse()
 	if *helpPtr {
 		flag.PrintDefaults()
 		os.Exit(0)
+	}
+
+	// Check for conflicting flags before modifying values
+	sinceFlag := flag.Lookup("since")
+	beforeFlag := flag.Lookup("before")
+	if *autoDatesPtr && (sinceFlag.Value.String() != sinceFlag.DefValue ||
+		beforeFlag.Value.String() != beforeFlag.DefValue) {
+		fmt.Fprintf(os.Stderr, "Warning: -auto-dates used with explicit -since/-before, using explicit dates\n")
+	} else if *autoDatesPtr {
+		// Handle auto-dates flag only if no conflicts
+		since, before, err := getFirstAndLatestCommitDates()
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Warning: Could not get commit dates, using last month: %v\n", err)
+			since, before = beforeMonth()
+		}
+		// Update the flag values with auto-detected dates
+		*sincePtr = since + " 00:00:00 " + timeZoneOffset()
+		*beforePtr = before + " 23:59:59 " + timeZoneOffset()
 	}
 	//checkMultiname
 	var author string

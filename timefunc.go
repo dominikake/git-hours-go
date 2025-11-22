@@ -3,8 +3,8 @@ package main
 import (
 	"errors"
 	"fmt"
-	"regexp"
 	"os/exec"
+	"regexp"
 	"time"
 )
 
@@ -83,4 +83,3 @@ func getFirstAndLatestCommitDates() (string, string, error) {
 
 	return firstCommitDate, latestCommitDate, nil
 }
-
