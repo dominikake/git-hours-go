@@ -1,26 +1,25 @@
 ![logo](figures/git-hours.svg)
 
-![travisCI](https://secure.travis-ci.org/lazypic/git-hours.svg)
-
 Git-hours is a command that calculates working time using the git log data.
 
+## Installation
 
-## Download & Run
-You can download Git-hours from links down below.
+### Install using Golang
+```bash
+go install github.com/dominikake/git-hours-go@latest
+```
 
-- [Windows x86-64](https://github.com/lazypic/git-hours/releases/download/v0.0.6/git-hours_windows_x86-64.tgz)
-- [macOS x86-64](https://github.com/lazypic/git-hours/releases/download/v0.0.6/git-hours_darwin_x86-64.tgz)
-- [Linux x86-64](https://github.com/lazypic/git-hours/releases/download/v0.0.6/git-hours_linux_x86-64.tgz)
+### Build from source
+```bash
+git clone https://github.com/dominikake/git-hours-go.git
+cd git-hours-go
+go build
+```
 
 ## Set Environment
-Put the downloaded file into the bin folder, which is set in the $PATH environment variable.
+Put the built binary into the bin folder, which is set in the $PATH environment variable.
 Then it will be recognized as a subcommand of git.
-Because if a command starts with ‘git-‘, git automatically recognizes it as a subcommand of git.
-
-## Install using Golang
-```
-$ go get -u github.com/lazypic/git-hours
-```
+Because if a command starts with 'git-', git automatically recognizes it as a subcommand of git.
 
 ## How to use
 
@@ -44,6 +43,8 @@ $ git hours -help
 
   -author string
     	author name
+  -auto-dates
+    	use first and last commit dates as range
   -before string
     	before date (default "2020-03-31 23:59:59 +0900")
   -debug
@@ -56,9 +57,16 @@ $ git hours -help
     	since(after) date (default "2020-03-01 00:00:00 +0900")
 ```
 
+### Auto-dates
+Use the `-auto-dates` flag to automatically set the date range from the first to the last commit in the repository. This is useful when you want to analyze the entire history of a project without manually specifying date ranges.
+
+```bash
+$ git hours -auto-dates
+```
+
 ### Since, Before
 You can set the start date and the end date with this options.
-If you don’t enter any value, the start date and the end date will be set as the first and last date of last month by default.
+If you don't enter any value, the start date and the end date will be set as the first and last date of last month by default.
 
 ```bash
 $ git hours -since 2019-02-01 -before today
@@ -129,14 +137,9 @@ From 2019-02-01 to 2019-03-31 : 13h1m48s
 ```
 
 
-## Why did I make it?
-I want to work regardless of when and where. So, I needed to calculate my working time.
+## Why did I fork it?
+I found git-hours to be a useful utility for a work project where I needed to track development time across repositories. The original tool by lazypic provided a solid foundation for calculating working time from git commit history.
 
-My first try was [toggle-style program](https://toggl.com). I felt that it is demanding tool. because users have to click button every time the work starts or ends.
+I started adding a feature to automatically calculate date ranges based on the actual commit history in a repository, which evolved into the `-auto-dates` flag. This enhancement makes it easier to analyze entire project histories without manually specifying date ranges.
 
-And the next try was [kimmobrunfeldt's git-hours](https://github.com/kimmobrunfeldt/git-hours#how-it-works). Mechanism of [kimmobrunfeldt's git-hours](https://github.com/kimmobrunfeldt/git-hours#how-it-works) looked reasonable to me.
-However, When I tried to install via https://github.com/kimmobrunfeldt/git-hours it didn't work well on my computer because of the node.js dependency.
-
-So, I revised [kimmobrunfeldt's git-hours](https://github.com/kimmobrunfeldt/git-hours) with Go language.
-Also, while I was revising it, I added some features that help to create an estimate sheet.
-Git-hours opens to everyone to download and run. Hope it helps those in need.
+All credit for the original implementation and concept goes to lazypic. This fork simply builds upon their excellent work with additional functionality that I found useful for my use case.
